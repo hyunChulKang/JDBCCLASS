@@ -6,18 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.Scanner;
-
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 
 public class WelcomHotel {
 	static {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -29,13 +24,11 @@ public class WelcomHotel {
 		try {
 			new WelcomHotel().ConnectionServer();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			new WelcomHotel().hotelStart();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -61,21 +54,33 @@ public class WelcomHotel {
 	public void roomEmpty() throws SQLException {
 		Connection conn = ConnectionServer();
 		PreparedStatement pstmt =null;
+		Statement stmt =null;
 		ResultSet rs =null;
-		int cnt=0;
-			
-		for(int i=100; i<131; i++) {
-				try {
-					String sql ="insert into welcomhotel (guest_name, customer_age, room_status, room_num) values(?,?,?,?)";
-					pstmt =conn.prepareStatement(sql);
-					pstmt.setString(1,"...");
-					pstmt.setString(2,"없음");
-					pstmt.setString(3,"공실");
-					pstmt.setInt(4,i);
-					pstmt.executeUpdate();
-				} catch (SQLException e) {
-				}
+		String name=null;
+		
+		stmt =conn.createStatement();
+		
+		String sql =" select guest_name from welcomhotel";
+		rs =stmt.executeQuery(sql);
+		
+		while(rs.next()) {
+			name=rs.getString("guest_name");
 		}
+		if(name == null) {
+			for(int i=101; i<131; i++) {
+					try {
+						String sql2 ="insert into welcomhotel (guest_name, customer_age, customer_tel, room_status, room_num) values(?,?,?,?,?)";
+						pstmt =conn.prepareStatement(sql2);
+						pstmt.setString(1,"...");
+						pstmt.setString(2,"없음");
+						pstmt.setString(3,"없음");
+						pstmt.setString(4,"공실");
+						pstmt.setInt(5,i);
+						pstmt.executeUpdate();
+					} catch (SQLException e) {
+					}
+			}
+		}	
 	}
 	public void  hotelStart() throws SQLException {
 		System.out.println();
@@ -114,7 +119,6 @@ public class WelcomHotel {
 		Statement stmt =null;
 		ResultSet rs =null;
 		String name="";
-		String age="";
 		String status="";
 		int roomNum;
 		int cnt=0;
@@ -124,14 +128,12 @@ public class WelcomHotel {
 			String sql =" select * from welcomhotel";
 			rs =stmt.executeQuery(sql);
 			
-		System.out.println(" 호텔예약 쿼리문: " + sql);
-		System.out.println("====쿼리 실행 결과====");
-		
-		System.out.print("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒현재 입실상황▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
-			while(rs.next()) {
+		System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒현재 입실상황▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+		System.out.println("객실\t객실상태\t예약자\t객실\t객실상태\t예약자\t객실\t객실상태\t예약자\t객실\t객실상태\t예약자\t객실\t객실상태\t예약자\t");
+		System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
+		while(rs.next()) {
 				cnt++;
 				name =rs.getString("guest_name");
-				age =rs.getString("customer_age");
 				status =rs.getString("room_status");
 				roomNum =rs.getInt("room_num");
 			if(cnt%5==0) {
@@ -176,9 +178,6 @@ public class WelcomHotel {
 					String sql =" select guest_name, room_num, room_status from welcomhotel";
 					rs =stmt.executeQuery(sql);
 					
-				System.out.println(" 호텔예약 쿼리문: " + sql);
-				System.out.println("====쿼리 실행 결과====");
-				
 					while(rs.next()) {
 						status =rs.getString("room_status");
 						roomNum=rs.getInt("room_num");
@@ -188,18 +187,19 @@ public class WelcomHotel {
 								return;
 							}else if(roomNum == roomNumber && getname.equals(name)){
 								
-							String sql2 ="UPDATE welcomhotel SET guest_name = ? , customer_age = ?, room_status  = ?  WHERE room_num  = ?";
+							String sql2 ="UPDATE welcomhotel SET guest_name = ? , customer_age = ?,customer_tel = ? , room_status  = ?  WHERE room_num  = ?";
 								pstmt =conn.prepareStatement(sql2);
 								
 								pstmt.setString(1,"...");
 								pstmt.setString(2,"없음");
-								pstmt.setString(3,"공실");
-								pstmt.setInt(4,roomNum);
+								pstmt.setString(3,"없음");
+								pstmt.setString(4,"공실");
+								pstmt.setInt(5,roomNum);
 								pstmt.executeUpdate();
 								
 								System.out.println("체크아웃이 완료 되었습니다.");
 								System.out.println("이용해주셔서 감사합니다.");
-								break;
+								return;
 							}else if( roomNumber == roomNum != getname.equals(name)) {
 								System.out.println("객실과 고객이름이 불일치합니다.");
 								System.out.println("체크아웃을 계속하시겠습니까?");
@@ -242,8 +242,8 @@ public class WelcomHotel {
 			
 			System.out.println();
 			roomList();
-			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println();
+			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println();
 			System.out.println();
 			System.out.println("\t\t\t\t\t101호~130호사이의 객실번호를 입력해주세요");
@@ -254,9 +254,6 @@ public class WelcomHotel {
 					String sql =" select room_num, room_status from welcomhotel";
 					rs =stmt.executeQuery(sql);
 					
-				System.out.println(" 호텔예약 쿼리문: " + sql);
-				System.out.println("====쿼리 실행 결과====");
-				
 					while(rs.next()) {
 						status =rs.getString("room_status");
 						roomNum=rs.getInt("room_num");
@@ -287,15 +284,15 @@ public class WelcomHotel {
 					System.out.println();
 					System.out.print("\t\t\t\t\t전화번호를 입력해주세요");
 					String tel = scan.nextLine();
-					
-					String sql ="UPDATE welcomhotel SET guest_name = ? , customer_age = ?, room_status  = ?  WHERE room_num  = ?";
+					String sql ="UPDATE welcomhotel SET guest_name = ? , customer_age = ?,customer_tel = ?, room_status  = ?  WHERE room_num  = ?";
 					try {
 					pstmt =conn.prepareStatement(sql);
 					
 					pstmt.setString(1,name);
 					pstmt.setString(2,age);
 					pstmt.setString(3,tel);
-					pstmt.setInt(4,inputNum);
+					pstmt.setString(4, status);
+					pstmt.setInt(5,inputNum);
 					pstmt.executeUpdate();
 					
 					} catch (SQLException e) {

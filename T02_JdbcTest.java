@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import kr.or.ddit.util.DBUtil;
+
 public class T02_JdbcTest {
 	public static void main(String[] args) {
 		/*
@@ -25,12 +27,7 @@ public class T02_JdbcTest {
 		Scanner sc =new Scanner(System.in);
 		int num =Integer.parseInt(sc.nextLine());
 try {
-	Class.forName("oracle.jdbc.driver.OracleDriver");
-
-	String url ="jdbc:oracle:thin:@localhost:1521/xe";
-	String userId ="kavin";
-	String password ="java";
-	conn = DriverManager.getConnection(url,userId,password);
+	conn=DBUtil.getConnetion();
 	
 	stmt =conn.createStatement();
 	
@@ -52,9 +49,7 @@ try {
 	System.out.println("출력 끝....");
 	
 	
-} catch (ClassNotFoundException e1) {
-	e1.printStackTrace();
-}catch (SQLException e) {
+} catch (SQLException e) {
 }finally {
 	//6. 종료( 사용했던 자원을 모둔 반납한다.
 	if(rs != null)
